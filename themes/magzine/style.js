@@ -27,6 +27,14 @@ const Style = () => {
         background: #4e4e4e;
       }
 
+      #theme-magzine .cta a:hover {
+        color: #111827;
+      }
+
+      .dark #theme-magzine .cta a:hover {
+        color: #ffffff;
+      }
+
       ${themeConsoleStyle('magzine', CONFIG)}
   `}</style>
   )
