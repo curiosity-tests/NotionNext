@@ -86,6 +86,19 @@ NotionNext教程
 1. 显示 `Sync fork` 按钮，点击并选择 `Update branch` 按钮，即可自动更新。
 ![Untitled](/legacy/03ded28f962b1c4f.png)
 
+::: tip 按需开启自动同步
+NotionNext 默认不再每天自动运行 `Upstream Sync`，避免 fork 站长在同步失败时反复收到 GitHub Actions 邮件。
+
+平时建议使用上面的 `Sync fork` 按钮手动更新。只有你确实希望仓库每天自动同步上游时，再打开 `.github/workflows/sync.yaml`，在 `on:` 下加入：
+
+```yaml
+  schedule:
+    - cron: "0 0 * * *"
+```
+
+保存并提交后，GitHub Actions 会恢复每日自动同步。若后续又收到失败邮件，删除这段 `schedule` 即可恢复为手动更新。
+:::
+
 1. 没有上面两种情况的按钮，这种情况下大概率是因为修改了相同部分的代码导致冲突，需要手动确认才能合并，请看下文。
 
 
