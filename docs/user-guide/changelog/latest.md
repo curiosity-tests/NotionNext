@@ -46,6 +46,26 @@
 主线修复已发布，主线 CI 工作流、CodeQL、文档部署和关联 Vercel Production 部署均已验证通过。后续版本发布不再通过自动版本号提交触发所有 fork 的生产重建。
 :::
 
+### 2026-08-05 Notion API 403 后续修复
+
+部分站点在同步最新代码后，Vercel 构建仍可能出现：
+
+```text
+[POST] https://www.notion.so/api/v3/loadPageChunk: 403 Forbidden
+```
+
+经与 [react-notion-x issue #710](https://github.com/NotionX/react-notion-x/issues/710) 对照确认，原因是 Notion 前置 Cloudflare 开始拦截 Node.js 请求中缺少 `User-Agent` 的非官方 API 请求。该问题不是站长的页面权限或 `NOTION_PAGE_ID` 配置突然失效。
+
+修复内容：
+
+- 在 `notion-client` 的全局 `ofetchOptions` 中补充 `NotionNext` 的 `User-Agent`。
+- 保留 Notion 请求失败时的空数据兜底，避免 403 进一步导致页面静态序列化失败。
+- 默认 `API_BASE_URL` 从 `https://www.notion.so/api/v3` 切换为 `https://app.notion.com/api/v3`，与 Notion 新域名接口路径对齐。
+
+验证结果：同一接口请求不带 UA 返回 `403`，带 `NotionNext` UA 返回 `400`（空请求参数错误），证明 Cloudflare 拦截已解除。
+
+站长处理方式：将 fork 同步到最新 `main` 后重新部署即可；无需修改 Node 版本，也无需反复修改页面权限。若仍出现 403，请先确认部署使用的是包含该修复的提交，并检查是否配置了自定义 `API_BASE_URL` 代理。
+
 ## 4.10.7 发布要点
 
 本版本将主题颜色定制从 Tailwind 类名覆盖，过渡到主题语义色变量与调色板方案。早期使用 TailwindCSS 是为了快速开发；现在主题框架已经成熟，后续更适合通过 `*_COLOR_*` 配置项表达主色、背景、文字、边框等语义色，便于用户在 Notion Config 中快速调色，也避免 `.bg-indigo-600` 这类工具类被覆盖后产生语义混淆。

@@ -6,7 +6,12 @@ import mediumZoom from '@fisch0920/medium-zoom'
 import 'katex/dist/katex.min.css'
 import dynamic from 'next/dynamic'
 import { useEffect, useRef } from 'react'
-import { NotionRenderer, useNotionContext } from 'react-notion-x'
+import {
+  NotionRenderer,
+  PageIcon,
+  Text as NotionRendererText,
+  useNotionContext
+} from 'react-notion-x'
 
 /**
  * 整个站点的核心组件
@@ -126,6 +131,7 @@ const NotionPage = ({ post, className }) => {
           Modal,
           Pdf,
           Quote: NotionQuote,
+          Callout: NotionCallout,
           Tweet
         }}
       />
@@ -351,6 +357,29 @@ const NotionQuote = ({ block, children }) => {
       {title && <NotionText value={title} />}
       {children}
     </blockquote>
+  )
+}
+
+const NotionCallout = ({ block, className, children }) => {
+  const blockColor = block?.format?.block_color
+  const hasIcon = Boolean(block?.format?.page_icon)
+  const classNames = [
+    'notion-callout',
+    blockColor ? `notion-${blockColor}_co` : '',
+    hasIcon ? '' : 'notion-callout-no-icon',
+    className || ''
+  ].filter(Boolean).join(' ')
+
+  return (
+    <div className={classNames}>
+      {hasIcon && <PageIcon block={block} hideDefaultIcon />}
+      <div
+        className='notion-callout-text'
+        style={hasIcon ? undefined : { marginLeft: 0 }}>
+        <NotionRendererText value={block?.properties?.title} block={block} />
+        {children}
+      </div>
+    </div>
   )
 }
 

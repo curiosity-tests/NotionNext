@@ -28,6 +28,13 @@ module.exports = {
   // Chatbase 机器人 @see https://www.chatbase.co/
   CHATBASE_ID: process.env.NEXT_PUBLIC_CHATBASE_ID || null,
 
+  // NotionNext 文档 AI 助手；需要指向自己的安全代理，不能把 Gemini Key 暴露到前端
+  DOCS_CHAT_API: process.env.NEXT_PUBLIC_DOCS_CHAT_API || '',
+  DOCS_CHAT_TITLE: process.env.NEXT_PUBLIC_DOCS_CHAT_TITLE || 'AI 助手',
+  DOCS_CHAT_WELCOME:
+    process.env.NEXT_PUBLIC_DOCS_CHAT_WELCOME ||
+    '你好，我是站点 AI 助手。你可以问我部署、主题、配置和常见排错问题。',
+
   // Dify 聊天机器人 @see https://dify.ai/
   DIFY_CHATBOT_ENABLED: process.env.NEXT_PUBLIC_DIFY_CHATBOT_ENABLED || false,
   DIFY_CHATBOT_BASE_URL: process.env.NEXT_PUBLIC_DIFY_CHATBOT_BASE_URL || '',

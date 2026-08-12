@@ -137,6 +137,21 @@ const Style = () => {
     opacity: 1;
   }
 
+  #theme-starter .signUpBtn{
+    display: inline-flex;
+    min-height: 2.5rem;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(255 255 255 / 0.2);
+    color: rgb(255 255 255);
+    line-height: 1;
+  }
+
+  #theme-starter .signUpBtn:hover{
+    background-color: rgb(255 255 255);
+    color: rgb(17 25 40);
+  }
+
   #theme-starter .sticky .loginBtn{
     --tw-text-opacity: 1;
     color: rgb(17 25 40 / var(--tw-text-opacity));
@@ -166,6 +181,16 @@ const Style = () => {
     background-color: var(--starter-color-primary-hover);
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
+  }
+
+  @media (min-width: 1024px) {
+    #theme-starter #navbarCollapse {
+      background-color: transparent !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+    }
   }
 
   #theme-starter .sticky #themeSwitcher ~ span{
@@ -264,6 +289,16 @@ const Style = () => {
   }
 
       ${themeConsoleStyle('starter', CONFIG)}
+
+  #theme-starter .starterHeroPrimaryBtn {
+    background-color: rgb(255 255 255) !important;
+    color: rgb(17 25 40) !important;
+  }
+
+  #theme-starter .starterHeroPrimaryBtn:hover {
+    background-color: rgb(243 244 246) !important;
+    color: var(--starter-color-text-muted) !important;
+  }
   `}</style>
 }
 

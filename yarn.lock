@@ -9310,11 +9310,6 @@ vite@^5.4.14:
   optionalDependencies:
     fsevents "~2.3.3"
 
-vitepress-chat@^0.0.3:
-  version "0.0.3"
-  resolved "https://registry.npmmirror.com/vitepress-chat/-/vitepress-chat-0.0.3.tgz#2d24d4fd9bb7448ea2ab38d1911f38e37644af57"
-  integrity sha512-t1pF65rglvOfocKLW8+8gBxOnc/0S4lMiXodLsY0EZVbPnfVfQaeuEifmkz0CVZbGPowemK8nZAwt9wmFaUAnQ==
-
 vitepress@^1.6.3:
   version "1.6.4"
   resolved "https://registry.npmmirror.com/vitepress/-/vitepress-1.6.4.tgz"

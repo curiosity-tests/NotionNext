@@ -1,0 +1,9 @@
+name = "notion-image-proxy"
+main = "worker.mjs"
+compatibility_date = "2026-07-22"
+
+# Replace img.example.com with your image subdomain.
+routes = [
+  { pattern = "img.example.com/image/*", custom_domain = true },
+  { pattern = "img.example.com/images/*", custom_domain = true }
+]
