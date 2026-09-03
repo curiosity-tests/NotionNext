@@ -137,6 +137,7 @@ args = ["/绝对路径/NotionNext/tools/notionnext-content-mcp/server.js"]
 - Notion token 只在服务端进程内使用，任何工具输出均脱敏
 - 默认草稿状态 `Invisible`，AI 无法直接公开发布内容
 - 所有写入禁止 `ext`，防止不可编辑的 JSON 富文本进入你的数据库
+- `refresh_site_cache` 的目标地址只能来自环境变量（不接受工具参数覆盖），ops cookie 令牌由密码经 scrypt 加盐派生，密码本体不离开本地进程；接收端 revalidate 接口需按相同方式派生校验
 
 ## 参考
 

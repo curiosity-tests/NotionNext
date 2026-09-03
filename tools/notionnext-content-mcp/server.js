@@ -10,6 +10,9 @@ const API_BASE = 'https://api.notion.com/v1'
 const DEFAULT_PROTOCOL_VERSION = '2025-06-18'
 const DEFAULT_NOTION_VERSION = '2026-03-11'
 const OPS_COOKIE_NAME = 'notionnext_ops_session'
+// Fixed salt for deriving the ops cookie token with scrypt. The receiving
+// revalidate endpoint must derive the same token to accept the request.
+const OPS_COOKIE_SALT = 'notionnext-content-mcp/ops-cookie/v1'
 const NOTIONNEXT_WRITE_CONTRACT_ERROR =
   'NotionNext-native writing contract: never write ext. Put structured metadata in first-class Notion properties, long-form content in page blocks via bodyMarkdown, and artwork in the native Page Cover.'
 
@@ -301,7 +304,6 @@ const tools = [
     inputSchema: {
       type: 'object',
       properties: {
-        baseUrl: { type: 'string' },
         eventSlug: { type: 'string' }
       },
       additionalProperties: false
@@ -1546,13 +1548,15 @@ async function refreshSiteCache(args = {}) {
   const password = process.env.OPS_ACCESS_PASSWORD?.trim()
   if (!password) throw new Error('OPS_ACCESS_PASSWORD is not configured')
 
-  const baseUrl = cleanString(args.baseUrl, 2048) ||
-    process.env.MCP_SITE_BASE_URL?.trim() ||
+  // The target URL is deliberately env-only: a model-controlled base URL must
+  // never receive the derived ops credential.
+  const baseUrl = process.env.MCP_SITE_BASE_URL?.trim() ||
     process.env.NEXT_PUBLIC_LINK?.trim() ||
     'http://localhost:3000'
 
   const url = new URL('/api/admin/content-revalidate', baseUrl)
-  const cookie = `${OPS_COOKIE_NAME}=${crypto.createHash('sha256').update(password).digest('hex')}`
+  const cookieToken = crypto.scryptSync(password, OPS_COOKIE_SALT, 32).toString('hex')
+  const cookie = `${OPS_COOKIE_NAME}=${cookieToken}`
   const response = await fetch(url, {
     method: 'POST',
     headers: {

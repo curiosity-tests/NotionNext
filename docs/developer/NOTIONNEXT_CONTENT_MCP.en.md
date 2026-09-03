@@ -137,6 +137,7 @@ This guarantees AI-written content remains fully editable in Notion and that wha
 - The Notion token stays inside the server process; every tool output is redacted
 - Drafts default to `Invisible`; the AI cannot publish directly
 - `ext` writes are always rejected, preventing uneditable JSON blobs in your database
+- `refresh_site_cache` resolves its target URL from environment variables only (never from tool arguments), and derives the ops cookie token from the password with salted scrypt; the raw password never leaves the local process, and the receiving revalidate endpoint must derive the same token
 
 ## References
 
