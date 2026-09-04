@@ -1119,13 +1119,25 @@ function getPageParentDataSourceId(page) {
   return page?.parent?.data_source_id || page?.parent?.database_id || ''
 }
 
+function assertPageInsideAllowedDataSource(page) {
+  const parentDataSourceId = getPageParentDataSourceId(page)
+  // Fail closed: a page that does not belong to any data source (for example
+  // a workspace-level page) can never be proven to be allow-listed, so it is
+  // rejected instead of skipped.
+  if (!parentDataSourceId) {
+    throw new Error(
+      'Page does not belong to a data source, so it cannot be verified against the NotionNext MCP allow-list.'
+    )
+  }
+  assertDataSourceAllowed(parentDataSourceId)
+}
+
 async function getAllowedPage(pageId) {
   const cleanPageId = cleanString(pageId, 160)
   if (!cleanPageId) throw new Error('pageId is required')
 
   const page = await notionRequest(`/pages/${cleanPageId}`)
-  const parentDataSourceId = getPageParentDataSourceId(page)
-  if (parentDataSourceId) assertDataSourceAllowed(parentDataSourceId)
+  assertPageInsideAllowedDataSource(page)
   return page
 }
 
@@ -1845,7 +1857,13 @@ async function main() {
   }
 }
 
-main().catch(error => {
-  console.error(error)
-  process.exit(1)
-})
+if (require.main === module) {
+  main().catch(error => {
+    console.error(error)
+    process.exit(1)
+  })
+}
+
+// Exported so smoke/unit tests can verify the write-boundary checks without
+// any network access or a configured Notion token.
+module.exports = { assertPageInsideAllowedDataSource, assertDataSourceAllowed }

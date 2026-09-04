@@ -4,6 +4,9 @@ const path = require('path')
 const { spawn } = require('child_process')
 
 const serverPath = path.join(__dirname, 'server.js')
+// Required in-process (the server guards main() behind require.main) so the
+// write-boundary checks can be exercised without network access.
+const { assertPageInsideAllowedDataSource } = require(serverPath)
 
 const child = spawn(process.execPath, [serverPath], {
   cwd: path.resolve(__dirname, '../..'),
@@ -201,6 +204,29 @@ async function main() {
   )
   assert(!('ext' in recordJson.propertiesPreview), 'draft preview must never contain ext')
   assert(recordJson.childrenCount >= 3, 'Record outcomes must be Notion body blocks')
+
+  // Write-boundary checks (no network, no Notion token needed).
+  process.env.NOTION_CONTENT_DATA_SOURCE_ID = 'smoke-allowed-data-source'
+  const allowListedPage = { parent: { data_source_id: 'smoke-allowed-data-source' } }
+  assertPageInsideAllowedDataSource(allowListedPage) // allow-listed parent passes
+
+  try {
+    assertPageInsideAllowedDataSource({ parent: { data_source_id: 'unregistered-id' } })
+    throw new Error('unregistered data source must be rejected')
+  } catch (error) {
+    assert(/allow-list/i.test(error.message), `unexpected boundary error: ${error.message}`)
+  }
+
+  try {
+    assertPageInsideAllowedDataSource({ parent: { workspace: true } })
+    throw new Error('page outside any data source must be rejected')
+  } catch (error) {
+    assert(
+      /does not belong to a data source/i.test(error.message),
+      `unexpected fail-closed error: ${error.message}`
+    )
+  }
+  delete process.env.NOTION_CONTENT_DATA_SOURCE_ID
 
   child.stdin.end()
   child.kill()

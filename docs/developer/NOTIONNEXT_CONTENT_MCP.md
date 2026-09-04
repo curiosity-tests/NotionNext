@@ -134,6 +134,7 @@ args = ["/绝对路径/NotionNext/tools/notionnext-content-mcp/server.js"]
 ## 安全模型
 
 - 默认只能读写环境变量登记过的 data source；临时调试可设 `NOTIONNEXT_MCP_ALLOW_UNLISTED_DATA_SOURCE=true`（仅限本地可信环境）
+- 按 pageId 操作时执行 fail-closed 校验：页面不属于任何 data source（如 workspace 顶层页面）时直接拒绝，因为无法证明它在白名单内
 - Notion token 只在服务端进程内使用，任何工具输出均脱敏
 - 默认草稿状态 `Invisible`，AI 无法直接公开发布内容
 - 所有写入禁止 `ext`，防止不可编辑的 JSON 富文本进入你的数据库

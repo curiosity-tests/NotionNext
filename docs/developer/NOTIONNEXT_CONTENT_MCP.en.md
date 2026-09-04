@@ -134,6 +134,7 @@ This guarantees AI-written content remains fully editable in Notion and that wha
 ## Security model
 
 - Only data sources registered via environment variables are reachable; for a trusted local debugging session you may set `NOTIONNEXT_MCP_ALLOW_UNLISTED_DATA_SOURCE=true`
+- Page-by-id operations fail closed: a page that does not belong to any data source (e.g. a workspace-level page) is rejected outright, because it cannot be proven to be allow-listed
 - The Notion token stays inside the server process; every tool output is redacted
 - Drafts default to `Invisible`; the AI cannot publish directly
 - `ext` writes are always rejected, preventing uneditable JSON blobs in your database
